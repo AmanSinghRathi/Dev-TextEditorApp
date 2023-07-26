@@ -22,7 +22,7 @@ const app = express();
 
 
 const server = http.createServer(app);
-const io = new Server(server);
+//const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, "./client/build")));
 
@@ -31,14 +31,15 @@ app.use("*", function (req, res) {
   res.sendFile(path.join(__dirname, "./client/build/index.html"));
 });
 
+const PORT = process.env.PORT || 8080;
 
+const io = new Server(PORT, {
+  cors: {
+    origin: server,
+    methods: ["GET", "POST"],
+  },
+});
 
-// const io = new Server(PORT, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//     methods: ["GET", "POST"],
-//   },
-// });
 
 io.on("connection", (socket) => {
   socket.on("get-document", async (documentId) => {
@@ -56,6 +57,6 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+// const PORT = process.env.PORT || 8080;
+// server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
